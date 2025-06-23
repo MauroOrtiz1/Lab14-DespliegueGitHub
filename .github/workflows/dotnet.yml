@@ -1,9 +1,9 @@
-name: Build and Deploy .NET Application
+name: Build and Deploy .NET 9 Application
 
 on:
   push:
     branches:
-      - main  # Se ejecuta cuando haces push a la rama main
+      - main
 
 jobs:
   build:
@@ -13,20 +13,22 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Set up .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0'
+    - name: Install .NET 9 manually
+      run: |
+        wget https://dotnetcli.azureedge.net/dotnet/Sdk/9.0.100-preview.3.24172.9/dotnet-sdk-9.0.100-preview.3.24172.9-linux-x64.tar.gz
+        mkdir -p $HOME/dotnet
+        tar zxf dotnet-sdk-9.0.100-preview.3.24172.9-linux-x64.tar.gz -C $HOME/dotnet
+        echo "$HOME/dotnet" >> $GITHUB_PATH
+        echo "DOTNET_ROOT=$HOME/dotnet" >> $GITHUB_ENV
+
+    - name: Check .NET version
+      run: dotnet --version
 
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build application
+    - name: Build
       run: dotnet build --configuration Release
 
-    - name: Publish application
+    - name: Publish
       run: dotnet publish --configuration Release --output ./published
-
-    - name: Deploy to server (ejemplo de despliegue)
-      run: |
-        echo "Publicación lista."
