@@ -13,23 +13,25 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Install .NET 9 manually
+    - name: Install .NET 9 Preview SDK
       run: |
         wget https://dotnetcli.azureedge.net/dotnet/Sdk/9.0.100-preview.1.24123.4/dotnet-sdk-9.0.100-preview.1.24123.4-linux-x64.tar.gz
         mkdir -p $HOME/dotnet9
-        tar zxf dotnet-sdk-9.0.100-preview.1.24123.4-linux-x64.tar.gz -C $HOME/dotnet9
+        tar -zxf dotnet-sdk-9.0.100-preview.1.24123.4-linux-x64.tar.gz -C $HOME/dotnet9
         echo "$HOME/dotnet9" >> $GITHUB_PATH
         echo "DOTNET_ROOT=$HOME/dotnet9" >> $GITHUB_ENV
 
-
-    - name: Check .NET version
+    - name: Confirm SDK version
       run: dotnet --version
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Lab13_BernieOrtiz.sln
 
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build Lab13_BernieOrtiz.sln --configuration Release
 
     - name: Publish
-      run: dotnet publish --configuration Release --output ./published
+      run: dotnet publish Lab13_BernieOrtiz.API/Lab13_BernieOrtiz.API.csproj --configuration Release --output ./published
+
+    - name: Done
+      run: echo "✅ Publicación finalizada con .NET 9"
